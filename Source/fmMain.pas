@@ -22,10 +22,10 @@ type
     procedure Edit3Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
   private
-    procedure UpdateFName(const aNotification: TNotification);
-    procedure UpdateLName(const aNotification: TNotification);
-    procedure UpdateAge(const aNotification: TNotification);
-    procedure UpdateName(const aNotification: TNotification);
+    procedure UpdateFName(const aSubject: TObject);
+    procedure UpdateLName(const aSubject: TObject);
+    procedure UpdateAge(const aSubject: TObject);
+    procedure UpdateName(const aSubject: TObject);
   public
     { Public declarations }
   end;
@@ -41,7 +41,7 @@ uses dmController;
 
 procedure TForm2.Button1Click(Sender: TObject);
 begin
-  NC.RemoveObserver(Self, 2, nil);
+  NC.RemoveObserver(UpdateLName, 2, nil);
 end;
 
 procedure TForm2.Edit1Change(Sender: TObject);
@@ -68,24 +68,24 @@ begin
   NC.AddObserver(UpdateName, 2);
 end;
 
-procedure TForm2.UpdateAge(const aNotification: TNotification);
+procedure TForm2.UpdateAge(const aSubject: TObject);
 begin
-  Label3.Caption := TDataModule1(aNotification.Subject).Age;
+  Label3.Caption := TDataModule1(aSubject).Age;
 end;
 
-procedure TForm2.UpdateFName(const aNotification: TNotification);
+procedure TForm2.UpdateFName(const aSubject: TObject);
 begin
-  Label1.Caption := TDataModule1(aNotification.Subject).FirstName;
+  Label1.Caption := TDataModule1(aSubject).FirstName;
 end;
 
-procedure TForm2.UpdateLName(const aNotification: TNotification);
+procedure TForm2.UpdateLName(const aSubject: TObject);
 begin
-  Label2.Caption := TDataModule1(aNotification.Subject).LastName;
+  Label2.Caption := TDataModule1(aSubject).LastName;
 end;
 
-procedure TForm2.UpdateName(const aNotification: TNotification);
+procedure TForm2.UpdateName(const aSubject: TObject);
 begin
-  Label4.Caption := TDataModule1(aNotification.Subject).FirstName + ' ' +TDataModule1(aNotification.Subject).LastName;
+  Label4.Caption := TDataModule1(aSubject).FirstName + ' ' +TDataModule1(aSubject).LastName;
 end;
 
 end.

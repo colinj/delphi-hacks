@@ -53,19 +53,19 @@ end;
 procedure TDataModule1.SetAge(const Value: string);
 begin
   FPerson.Age := StrToInt(Value);
-  NC.NotifyWith(3, Self);
+  NC.BroadcastWith(3, Self);
 end;
 
 procedure TDataModule1.SetFirstName(const Value: string);
 begin
   FPerson.FirstName := Value;
-  NC.NotifyWith(1, Self);
+  NC.BroadcastWith(1, Self);
 end;
 
 procedure TDataModule1.SetLastName(const Value: string);
 begin
   FPerson.LastName := Value;
-  NC.NotifyWith(2, Self);
+  NC.BroadcastWith(2, Self);
 end;
 
 initialization

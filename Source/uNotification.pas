@@ -14,7 +14,7 @@ type
     property Subject: TObject read FSubject;
   end;
 
-  TNotificationProc = procedure(const aNotification: TNotification) of object;
+  TNotificationProc = procedure(const aSubject: TObject) of object;
 
   TDispatch = record
   private
@@ -22,7 +22,7 @@ type
     FSubject: TObject;
   public
     constructor Create(const aNotification: TNotificationProc; const aSubject: TObject);
-    property Notification: TNotificationProc read FNotification write FNotification;
+    property Receive: TNotificationProc read FNotification write FNotification;
     property Subject: TObject read FSubject write FSubject;
   end;
 
@@ -33,14 +33,15 @@ type
   TNotificationCentre = class(TObject)
   strict private
     FDispatchTable: TDispatchTable;
+    function SameMethod(const aFirst, aSecond: TNotificationProc): Boolean;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure AddObserver(const aReceive: TNotificationProc; const anId: Integer; const aSubject: TObject = nil);
-    procedure Notify(const aNotification: TNotification);
-    procedure NotifyWith(const anId: Integer; const aSubject: TObject = nil);
-    procedure RemoveObserver(const anObserver: TObject); overload;
-    procedure RemoveObserver(const anObserver: TObject; const anId: Integer; const aSubject: TObject); overload;
+    procedure AddObserver(const anObserver: TNotificationProc; const anId: Integer; const aSubject: TObject = nil);
+    procedure Broadcast(const aNotification: TNotification);
+    procedure BroadcastWith(const anId: Integer; const aSubject: TObject = nil);
+    procedure RemoveObserver(const anObserver: TNotificationProc); overload;
+    procedure RemoveObserver(const anObserver: TNotificationProc; const anId: Integer; const aSubject: TObject = nil); overload;
   end;
 
 
@@ -48,12 +49,12 @@ implementation
 
 { TNotificationCentre }
 
-procedure TNotificationCentre.AddObserver(const aReceive: TNotificationProc; const anId: Integer; const aSubject: TObject);
+procedure TNotificationCentre.AddObserver(const anObserver: TNotificationProc; const anId: Integer; const aSubject: TObject);
 var
   DispatchList: TDispatchList;
   DispatchItem: TDispatch;
 begin
-  DispatchItem := TDispatch.Create(aReceive, aSubject);
+  DispatchItem := TDispatch.Create(anObserver, aSubject);
 
   if not FDispatchTable.TryGetValue(anId, DispatchList) then
   begin
@@ -82,7 +83,7 @@ begin
   inherited;
 end;
 
-procedure TNotificationCentre.Notify(const aNotification: TNotification);
+procedure TNotificationCentre.Broadcast(const aNotification: TNotification);
 var
   DispatchList: TDispatchList;
   DispatchItem: TDispatch;
@@ -91,24 +92,24 @@ begin
   begin
     for DispatchItem in DispatchList do
       if (DispatchItem.Subject = nil) or (DispatchItem.Subject = aNotification.Subject) then
-        DispatchItem.Notification(aNotification);
-  end;
+        DispatchItem.Receive(aNotification.Subject);
+  end;                                                          L
 
 end;
 
-procedure TNotificationCentre.NotifyWith(const anId: Integer; const aSubject: TObject);
+procedure TNotificationCentre.BroadcastWith(const anId: Integer; const aSubject: TObject);
 var
   Notification: TNotification;
 begin
   Notification := TNotification.Create(anId, aSubject);
   try
-    Notify(Notification);
+    Broadcast(Notification);
   finally
     Notification.Free;
   end;
 end;
 
-procedure TNotificationCentre.RemoveObserver(const anObserver: TObject; const anId: Integer; const aSubject: TObject);
+procedure TNotificationCentre.RemoveObserver(const anObserver: TNotificationProc; const anId: Integer; const aSubject: TObject);
 var
   DispatchList: TDispatchList;
   I: Integer;
@@ -118,7 +119,7 @@ begin
     begin
       for I := DispatchList.Count - 1 downto 0 do
       begin
-        if (TMethod(DispatchList[I].Notification).Data = anObserver) and 
+        if SameMethod(DispatchList[I].Receive, anObserver) and
           ((aSubject = nil) or (DispatchList[I].Subject = aSubject)) then
           DispatchList.Delete(I);
       end;
@@ -128,14 +129,19 @@ begin
     begin
       for I := DispatchList.Count - 1 downto 0 do
       begin
-        if (TMethod(DispatchList[I].Notification).Data = anObserver) and 
+        if SameMethod(DispatchList[I].Receive, anObserver) and
           ((aSubject = nil) or (DispatchList[I].Subject = aSubject)) then
           DispatchList.Delete(I);
       end;
     end;
 end;
 
-procedure TNotificationCentre.RemoveObserver(const anObserver: TObject);
+function TNotificationCentre.SameMethod(const aFirst, aSecond: TNotificationProc): Boolean;
+begin
+  Result := (TMethod(aFirst).Code = TMethod(aSecond).Code) and (TMethod(aFirst).Data = TMethod(aSecond).Data);
+end;
+
+procedure TNotificationCentre.RemoveObserver(const anObserver: TNotificationProc);
 begin
   RemoveObserver(anObserver, 0, nil);
 end;
