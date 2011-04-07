@@ -65,8 +65,9 @@ object Form2: TForm2
     Top = 104
     Width = 121
     Height = 21
+    NumbersOnly = True
     TabOrder = 2
-    Text = 'Edit1'
+    Text = '12'
     OnChange = Edit3Change
   end
   object Button1: TButton

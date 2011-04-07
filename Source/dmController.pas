@@ -26,6 +26,11 @@ var
   DataModule1: TDataModule1;
   NC: TNotificationCentre;
 
+const
+  N_CHANGE_FNAME = 1;
+  N_CHANGE_LNAME = 2;
+  N_CHANGE_AGE = 3;
+
 implementation
 
 {$R *.dfm}
@@ -53,19 +58,19 @@ end;
 procedure TDataModule1.SetAge(const Value: string);
 begin
   FPerson.Age := StrToInt(Value);
-  NC.BroadcastWith(3, Self);
+  NC.Broadcast(Self, N_CHANGE_AGE);
 end;
 
 procedure TDataModule1.SetFirstName(const Value: string);
 begin
   FPerson.FirstName := Value;
-  NC.BroadcastWith(1, Self);
+  NC.Broadcast(Self, N_CHANGE_FNAME);
 end;
 
 procedure TDataModule1.SetLastName(const Value: string);
 begin
   FPerson.LastName := Value;
-  NC.BroadcastWith(2, Self);
+  NC.Broadcast(Self, N_CHANGE_LNAME);
 end;
 
 initialization

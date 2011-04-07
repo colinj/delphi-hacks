@@ -22,10 +22,11 @@ type
     procedure Edit3Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
   private
-    procedure UpdateFName(const aSubject: TObject);
-    procedure UpdateLName(const aSubject: TObject);
-    procedure UpdateAge(const aSubject: TObject);
-    procedure UpdateName(const aSubject: TObject);
+    procedure UpdateFName(const aSubject: TObject; const aNotifyId: Integer);
+    procedure UpdateLName(const aSubject: TObject; const aNotifyId: Integer);
+    procedure UpdateAge(const aSubject: TObject; const aNotifyId: Integer);
+    procedure UpdateFullName(const aSubject: TObject; const aNotifyId: Integer);
+    procedure UpdateName(const aSubject: TObject; const aNotifyId: Integer);
   public
     { Public declarations }
   end;
@@ -41,7 +42,7 @@ uses dmController;
 
 procedure TForm2.Button1Click(Sender: TObject);
 begin
-  NC.RemoveObserver(UpdateLName, 2, nil);
+  NC.RemoveObserver(UpdateName, 2, nil);
 end;
 
 procedure TForm2.Edit1Change(Sender: TObject);
@@ -61,31 +62,48 @@ end;
 
 procedure TForm2.FormCreate(Sender: TObject);
 begin
-  NC.AddObserver(UpdateFName, 1);
-  NC.AddObserver(UpdateLName, 2);
-  NC.AddObserver(UpdateAge, 3);
-  NC.AddObserver(UpdateName, 1);
-  NC.AddObserver(UpdateName, 2);
+//  NC.AddObserver(UpdateFName, 1);
+//  NC.AddObserver(UpdateLName, 2);
+//  NC.AddObserver(UpdateAge, 3);
+  NC.AddObserver(UpdateName, N_CHANGE_FNAME);
+  NC.AddObserver(UpdateName, N_CHANGE_LNAME);
+  NC.AddObserver(UpdateName, N_CHANGE_AGE);
+  NC.AddObserver(UpdateFullName, N_CHANGE_FNAME);
+  NC.AddObserver(UpdateFullName, N_CHANGE_LNAME);
 end;
 
-procedure TForm2.UpdateAge(const aSubject: TObject);
+procedure TForm2.UpdateAge(const aSubject: TObject; const aNotifyId: Integer);
 begin
   Label3.Caption := TDataModule1(aSubject).Age;
 end;
 
-procedure TForm2.UpdateFName(const aSubject: TObject);
+procedure TForm2.UpdateFName(const aSubject: TObject; const aNotifyId: Integer);
 begin
   Label1.Caption := TDataModule1(aSubject).FirstName;
 end;
 
-procedure TForm2.UpdateLName(const aSubject: TObject);
+procedure TForm2.UpdateLName(const aSubject: TObject; const aNotifyId: Integer);
 begin
   Label2.Caption := TDataModule1(aSubject).LastName;
 end;
 
-procedure TForm2.UpdateName(const aSubject: TObject);
+procedure TForm2.UpdateFullName(const aSubject: TObject; const aNotifyId: Integer);
 begin
   Label4.Caption := TDataModule1(aSubject).FirstName + ' ' +TDataModule1(aSubject).LastName;
+end;
+
+procedure TForm2.UpdateName(const aSubject: TObject; const aNotifyId: Integer);
+begin
+  case aNotifyId of
+    N_CHANGE_FNAME:
+      Label1.Caption := TDataModule1(aSubject).FirstName;
+
+    N_CHANGE_LNAME:
+      Label2.Caption := TDataModule1(aSubject).LastName;
+
+    N_CHANGE_AGE:
+      Label3.Caption := TDataModule1(aSubject).Age;
+  end;
 end;
 
 end.
