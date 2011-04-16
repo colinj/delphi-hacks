@@ -5,21 +5,25 @@ interface
 uses SysUtils, Classes, Generics.Collections;
 
 type
-  TNotificationProc = procedure(const aPublisher: TObject; const aTopic: Integer) of object;
+  TEvent = class(TObject);
+
+  TEventClass = class of TEvent;
+
+  TNotificationProc = procedure(const aPublisher: TObject; const aTopic: TEventClass) of object;
 
   TDispatch = record
   private
     FNotification: TNotificationProc;
     FPublisher: TObject;
   public
-    constructor Create(const aNotification: TNotificationProc; const aSubject: TObject);
+    constructor Create(const aNotification: TNotificationProc; const aPublisher: TObject);
     property Handle: TNotificationProc read FNotification write FNotification;
     property Publisher: TObject read FPublisher write FPublisher;
   end;
 
   TDispatchList = class(TList<TDispatch>);
 
-  TDispatchTable = class(TDictionary<Integer, TDispatchList>);
+  TDispatchTable = class(TDictionary<TEventClass, TDispatchList>);
 
   TNotificationCentre = class(TObject)
   strict private
@@ -28,17 +32,17 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Subscribe(const aSubscriber: TNotificationProc; const aTopic: Integer; const aPublisher: TObject = nil);
-    procedure Publish(const aPublisher: TObject; const aTopic: Integer);
+    procedure Publish(const aPublisher: TObject; const aTopic: TEventClass);
+    procedure Subscribe(const aSubscriber: TNotificationProc; const aTopic: TEventClass; const aPublisher: TObject = nil);
     procedure Unsubscribe(const aSubscriber: TNotificationProc); overload;
-    procedure Unsubscribe(const aSubscriber: TNotificationProc; const anId: Integer; const aPublisher: TObject = nil); overload;
+    procedure Unsubscribe(const aSubscriber: TNotificationProc; const aTopic: TEventClass; const aPublisher: TObject = nil); overload;
   end;
 
 implementation
 
 { TNotificationCentre }
 
-procedure TNotificationCentre.Subscribe(const aSubscriber: TNotificationProc; const aTopic: Integer; const aPublisher: TObject);
+procedure TNotificationCentre.Subscribe(const aSubscriber: TNotificationProc; const aTopic: TEventClass; const aPublisher: TObject);
 var
   DispatchList: TDispatchList;
   DispatchItem: TDispatch;
@@ -72,17 +76,20 @@ begin
   inherited;
 end;
 
-procedure TNotificationCentre.Publish(const aPublisher: TObject; const aTopic: Integer);
+procedure TNotificationCentre.Publish(const aPublisher: TObject; const aTopic: TEventClass);
 var
   Dispatcher: TDispatchList;
   Dispatch: TDispatch;
+  Event: TEventClass;
 begin
-  if FDispatchTable.TryGetValue(aTopic, Dispatcher) then
-  begin
-    for Dispatch in Dispatcher do
-      if (Dispatch.Publisher = nil) or (Dispatch.Publisher = aPublisher) then
-        Dispatch.Handle(aPublisher, aTopic);
-  end;
+  for Event in FDispatchTable.Keys do
+    if aTopic.InheritsFrom(Event) then
+    begin
+      Dispatcher := FDispatchTable.Items[Event];
+      for Dispatch in Dispatcher do
+        if (Dispatch.Publisher = nil) or (Dispatch.Publisher = aPublisher) then
+          Dispatch.Handle(aPublisher, aTopic);
+    end;
 end;
 
 function TNotificationCentre.SameMethod(const aFirst, aSecond: TNotificationProc): Boolean;
@@ -92,16 +99,16 @@ end;
 
 procedure TNotificationCentre.Unsubscribe(const aSubscriber: TNotificationProc);
 begin
-  Unsubscribe(aSubscriber, 0, nil);
+  Unsubscribe(aSubscriber, nil, nil);
 end;
 
-procedure TNotificationCentre.Unsubscribe(const aSubscriber: TNotificationProc; const anId: Integer; const aPublisher: TObject);
+procedure TNotificationCentre.Unsubscribe(const aSubscriber: TNotificationProc; const aTopic: TEventClass; const aPublisher: TObject);
 var
   DispatchList: TDispatchList;
   I: Integer;
 begin
-  if anId > 0 then
-    if FDispatchTable.TryGetValue(anId, DispatchList) then
+  if Assigned(aTopic) then
+    if FDispatchTable.TryGetValue(aTopic, DispatchList) then
     begin
       for I := DispatchList.Count - 1 downto 0 do
       begin
@@ -122,10 +129,10 @@ end;
 
 { TDispatch }
 
-constructor TDispatch.Create(const aNotification: TNotificationProc; const aSubject: TObject);
+constructor TDispatch.Create(const aNotification: TNotificationProc; const aPublisher: TObject);
 begin
   FNotification := aNotification;
-  FPublisher := aSubject;
+  FPublisher := aPublisher;
 end;
 
 end.

@@ -22,14 +22,14 @@ type
     property Age: string read GetAge write SetAge;
   end;
 
+  TPersonEvent = class(TEvent);
+  TFirstNameEvent = class(TPersonEvent);
+  TLastNameEvent = class(TPersonEvent);
+  TAgeEvent = class(TPersonEvent);
+
 var
   DataModule1: TDataModule1;
   NC: TNotificationCentre;
-
-const
-  N_CHANGE_FNAME = 1;
-  N_CHANGE_LNAME = 2;
-  N_CHANGE_AGE = 3;
 
 implementation
 
@@ -58,19 +58,19 @@ end;
 procedure TDataModule1.SetAge(const Value: string);
 begin
   FPerson.Age := StrToInt(Value);
-  NC.Publish(Self, N_CHANGE_AGE);
+  NC.Publish(Self, TAgeEvent);
 end;
 
 procedure TDataModule1.SetFirstName(const Value: string);
 begin
   FPerson.FirstName := Value;
-  NC.Publish(Self, N_CHANGE_FNAME);
+  NC.Publish(Self, TFirstNameEvent);
 end;
 
 procedure TDataModule1.SetLastName(const Value: string);
 begin
   FPerson.LastName := Value;
-  NC.Publish(Self, N_CHANGE_LNAME);
+  NC.Publish(Self, TLastNameEvent);
 end;
 
 initialization

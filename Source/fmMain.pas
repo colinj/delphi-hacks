@@ -23,11 +23,11 @@ type
     procedure Edit3Change(Sender: TObject);
     procedure Button1Click(Sender: TObject);
   private
-    procedure UpdateFName(const aPublisher: TObject; const aTopic: Integer);
-    procedure UpdateLName(const aPublisher: TObject; const aTopic: Integer);
-    procedure UpdateAge(const aPublisher: TObject; const aTopic: Integer);
-    procedure UpdateFullName(const aPublisher: TObject; const aTopic: Integer);
-    procedure UpdateName(const aPublisher: TObject; const aTopic: Integer);
+    procedure UpdateFName(const aPublisher: TObject; const aTopic: TEventClass);
+    procedure UpdateLName(const aPublisher: TObject; const aTopic: TEventClass);
+    procedure UpdateAge(const aPublisher: TObject; const aTopic: TEventClass);
+    procedure UpdateFullName(const aPublisher: TObject; const aTopic: TEventClass);
+    procedure UpdateName(const aPublisher: TObject; const aTopic: TEventClass);
   public
     { Public declarations }
   end;
@@ -43,7 +43,7 @@ uses dmController;
 
 procedure TForm2.Button1Click(Sender: TObject);
 begin
-  NC.Unsubscribe(UpdateName, 2, nil);
+  NC.Unsubscribe(UpdateLName, TLastNameEvent);
 end;
 
 procedure TForm2.Edit1Change(Sender: TObject);
@@ -63,49 +63,48 @@ end;
 
 procedure TForm2.FormCreate(Sender: TObject);
 begin
-  NC.Subscribe(UpdateName, N_CHANGE_FNAME);
-  NC.Subscribe(UpdateName, N_CHANGE_LNAME);
-  NC.Subscribe(UpdateName, N_CHANGE_AGE);
-  NC.Subscribe(UpdateFullName, N_CHANGE_FNAME);
-  NC.Subscribe(UpdateFullName, N_CHANGE_LNAME);
+  NC.Subscribe(UpdateFName, TFirstNameEvent);
+  NC.Subscribe(UpdateLName, TLastNameEvent);
+  NC.Subscribe(UpdateAge, TAgeEvent);
+  NC.Subscribe(UpdateFullName, TPersonEvent);
 end;
 
-procedure TForm2.UpdateAge(const aPublisher: TObject; const aTopic: Integer);
+procedure TForm2.UpdateAge(const aPublisher: TObject; const aTopic: TEventClass);
 begin
   Label3.Caption := TDataModule1(aPublisher).Age;
 end;
 
-procedure TForm2.UpdateFName(const aPublisher: TObject; const aTopic: Integer);
+procedure TForm2.UpdateFName(const aPublisher: TObject; const aTopic: TEventClass);
 begin
   Label1.Caption := TDataModule1(aPublisher).FirstName;
   Edit4.Text := TDataModule1(aPublisher).FirstName;
 end;
 
-procedure TForm2.UpdateLName(const aPublisher: TObject; const aTopic: Integer);
+procedure TForm2.UpdateLName(const aPublisher: TObject; const aTopic: TEventClass);
 begin
   Label2.Caption := TDataModule1(aPublisher).LastName;
 end;
 
-procedure TForm2.UpdateFullName(const aPublisher: TObject; const aTopic: Integer);
+procedure TForm2.UpdateFullName(const aPublisher: TObject; const aTopic: TEventClass);
 begin
   Label4.Caption := TDataModule1(aPublisher).FirstName + ' ' +TDataModule1(aPublisher).LastName;
 end;
 
-procedure TForm2.UpdateName(const aPublisher: TObject; const aTopic: Integer);
+procedure TForm2.UpdateName(const aPublisher: TObject; const aTopic: TEventClass);
 begin
-  case aTopic of
-    N_CHANGE_FNAME:
-      begin
-        Label1.Caption := TDataModule1(aPublisher).FirstName;
-        Edit4.Text := TDataModule1(aPublisher).FirstName;
-        Edit1.Text := TDataModule1(aPublisher).FirstName;
-      end;
-    N_CHANGE_LNAME:
-      Label2.Caption := TDataModule1(aPublisher).LastName;
-
-    N_CHANGE_AGE:
-      Label3.Caption := TDataModule1(aPublisher).Age;
-  end;
+//  case aTopic is
+//    N_CHANGE_FNAME:
+//      begin
+//        Label1.Caption := TDataModule1(aPublisher).FirstName;
+//        Edit4.Text := TDataModule1(aPublisher).FirstName;
+//        Edit1.Text := TDataModule1(aPublisher).FirstName;
+//      end;
+//    N_CHANGE_LNAME:
+//      Label2.Caption := TDataModule1(aPublisher).LastName;
+//
+//    N_CHANGE_AGE:
+//      Label3.Caption := TDataModule1(aPublisher).Age;
+//  end;
 end;
 
 end.
