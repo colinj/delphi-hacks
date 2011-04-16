@@ -79,4 +79,13 @@ object Form2: TForm2
     TabOrder = 3
     OnClick = Button1Click
   end
+  object Edit4: TEdit
+    Left = 520
+    Top = 32
+    Width = 121
+    Height = 21
+    TabOrder = 4
+    Text = 'Edit4'
+    OnChange = Edit1Change
+  end
 end
