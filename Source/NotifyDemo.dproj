@@ -50,6 +50,9 @@
 				<DesignClass>TDataModule</DesignClass>
 			</DCCReference>
 			<DCCReference Include="uEvents.pas"/>
+			<DCCReference Include="fmBarChart.pas">
+				<Form>frmBarChart</Form>
+			</DCCReference>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

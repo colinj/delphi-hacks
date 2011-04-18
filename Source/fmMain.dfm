@@ -137,34 +137,34 @@ object frmMain: TfrmMain
     TabOrder = 10
     OnClick = Button3Click
   end
-  object Chart1: TChart
-    Left = 415
-    Top = 198
-    Width = 418
-    Height = 250
-    Title.Text.Strings = (
-      'TChart')
-    View3D = False
-    TabOrder = 11
-    object Series1: TBarSeries
-      Marks.Arrow.Visible = True
-      Marks.Callout.Brush.Color = clBlack
-      Marks.Callout.Arrow.Visible = True
-      Marks.Visible = True
-      Gradient.Direction = gdTopBottom
-      XValues.Name = 'X'
-      XValues.Order = loAscending
-      YValues.Name = 'Bar'
-      YValues.Order = loNone
-    end
-  end
   object Button4: TButton
     Left = 232
     Top = 404
     Width = 75
     Height = 25
     Caption = 'Button4'
-    TabOrder = 12
+    TabOrder = 11
     OnClick = Button4Click
+  end
+  object StringGrid1: TStringGrid
+    Left = 528
+    Top = 32
+    Width = 385
+    Height = 169
+    ColCount = 4
+    DefaultColWidth = 88
+    DrawingStyle = gdsGradient
+    FixedCols = 0
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
+    TabOrder = 12
+  end
+  object Button5: TButton
+    Left = 912
+    Top = 448
+    Width = 75
+    Height = 25
+    Caption = 'Button5'
+    TabOrder = 13
+    OnClick = Button5Click
   end
 end

@@ -111,6 +111,7 @@ var
   I: Integer;
 begin
   if Assigned(aTopic) then
+  begin
     if FDispatchTable.TryGetValue(aTopic, DispatchList) then
     begin
       for I := DispatchList.Count - 1 downto 0 do
@@ -118,7 +119,8 @@ begin
         if SameMethod(DispatchList[I].Handle, aSubscriber) and  ((aPublisher = nil) or (DispatchList[I].Publisher = aPublisher)) then
           DispatchList.Delete(I);
       end;
-    end
+    end;
+  end
   else
     for DispatchList in FDispatchTable.Values do
     begin

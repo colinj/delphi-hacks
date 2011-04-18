@@ -27,6 +27,7 @@ type
     property LastName: string read GetLastName write SetLastName;
     property Age: string read GetAge write SetAge;
     property Current: TGrades read GetCurrent;
+    property Grades: TGradesList read FGrades;
   end;
 
 var

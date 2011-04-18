@@ -6,13 +6,15 @@ uses
   uNotification in 'uNotification.pas',
   uModel in 'uModel.pas',
   dmController in 'dmController.pas' {dtmController: TDataModule},
-  uEvents in 'uEvents.pas';
+  uEvents in 'uEvents.pas',
+  fmBarChart in 'fmBarChart.pas' {frmBarChart};
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.MainFormOnTaskbar := True;
+//  Application.MainFormOnTaskbar := True;
+  Application.MainFormOnTaskbar := False;
   Application.CreateForm(TdtmController, dtmController);
   Application.CreateForm(TfrmMain, frmMain);
   Application.Run;

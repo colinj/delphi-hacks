@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, uNotification, uEvents, TeEngine, Series, ExtCtrls, TeeProcs, Chart;
+  Dialogs, StdCtrls, uNotification, uEvents, TeEngine, Series, ExtCtrls, TeeProcs, Chart, Grids;
 
 type
   TfrmMain = class(TForm)
@@ -23,9 +23,9 @@ type
     Edit8: TEdit;
     Button2: TButton;
     Button3: TButton;
-    Chart1: TChart;
-    Series1: TBarSeries;
     Button4: TButton;
+    StringGrid1: TStringGrid;
+    Button5: TButton;
     procedure FormCreate(Sender: TObject);
     procedure Edit1Change(Sender: TObject);
     procedure Edit2Change(Sender: TObject);
@@ -34,6 +34,7 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
   private
     procedure UpdateFName(const aPublisher: TObject; const anEvent: TEventClass);
     procedure UpdateLName(const aPublisher: TObject; const anEvent: TEventClass);
@@ -42,7 +43,8 @@ type
     procedure UpdateName(const aPublisher: TObject; const anEvent: TEventClass);
     procedure UpdateGrade(const aPublisher: TObject; const anEvent: TEventClass);
     procedure UpdateGradeList(const aPublisher: TObject; const anEvent: TEventClass);
-    procedure UpdateChart(const aPublisher: TObject; const anEvent: TEventClass);
+    procedure InitialiseGrid;
+    procedure UpdateGrid(const aPublisher: TObject; const anEvent: TEventClass);
   public
     { Public declarations }
   end;
@@ -52,7 +54,7 @@ var
 
 implementation
 
-uses dmController, uModel;
+uses dmController, uModel, fmBarChart;
 
 {$R *.dfm}
 
@@ -84,6 +86,14 @@ begin
   end;
 end;
 
+procedure TfrmMain.Button5Click(Sender: TObject);
+var
+  NewBarChart: TfrmBarChart;
+begin
+  NewBarChart := TfrmBarChart.Create(Application);
+  NewBarChart.Show;
+end;
+
 procedure TfrmMain.Edit1Change(Sender: TObject);
 begin
   dtmController.FirstName := TEdit(Sender).Text;
@@ -101,36 +111,51 @@ end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
+  UpdateGradeList(dtmController.Current, nil);
+  StringGrid1.Rows[0].CommaText := 'Name,A,B,C';
+  InitialiseGrid;
+
   NC.Subscribe(UpdateFName, TFirstNameEvent);
   NC.Subscribe(UpdateLName, TLastNameEvent);
   NC.Subscribe(UpdateAge, TAgeEvent);
   NC.Subscribe(UpdateFullName, TPersonEvent);
 //  NC.Subscribe(UpdateGrade, TGradeChange);
   NC.Subscribe(UpdateGradeList, TGradeEvent);
-  NC.Subscribe(UpdateChart, TGradeEvent);
-  UpdateGradeList(dtmController.Current, nil);
-  UpdateChart(dtmController.Current, TGradeEvent);
+
+  NC.Subscribe(UpdateGrid, TGradeChange);
+end;
+
+procedure TfrmMain.InitialiseGrid;
+var
+  I: Integer;
+begin
+  StringGrid1.RowCount := dtmController.Grades.Count + 1;
+  for I := 0 to dtmController.Grades.Count - 1 do
+  begin
+    StringGrid1.Objects[0, I + 1] := dtmController.Grades.Items[I];
+//    StringGrid1.Cols[0].Objects[I + 1] := dtmController.Grades.Items[I];
+    UpdateGrid(dtmController.Grades.Items[I], nil);
+  end;
+//    StringGrid1.Objects[0, I + 1] := dtmController.Grades.Items[I];
+end;
+
+procedure TfrmMain.UpdateGrid(const aPublisher: TObject; const anEvent: TEventClass);
+var
+  RowNo: Integer;
+begin
+  RowNo := StringGrid1.Cols[0].IndexOfObject(aPublisher);
+  if RowNo > 0 then
+  begin
+    StringGrid1.Cells[0, RowNo] := TGrades(aPublisher).Name;
+    StringGrid1.Cells[1, RowNo] := IntToStr(TGrades(aPublisher).ValueA);
+    StringGrid1.Cells[2, RowNo] := IntToStr(TGrades(aPublisher).ValueB);
+    StringGrid1.Cells[3, RowNo] := IntToStr(TGrades(aPublisher).ValueC);
+  end;
 end;
 
 procedure TfrmMain.UpdateAge(const aPublisher: TObject; const anEvent: TEventClass);
 begin
   Label3.Caption := TdtmController(aPublisher).Age;
-end;
-
-procedure TfrmMain.UpdateChart(const aPublisher: TObject; const anEvent: TEventClass);
-var
-  Grades: TGrades;
-begin
-  if anEvent.InheritsFrom(TGradeEvent) then
-  begin
-    Grades := TGrades(aPublisher);
-
-    Chart1.Title.Caption := Grades.Name;
-    Series1.Clear;
-    Series1.Add(Grades.ValueA, 'A', clRed);
-    Series1.Add(Grades.ValueB, 'B', clBlue);
-    Series1.Add(Grades.ValueC, 'C', clGreen);
-  end;
 end;
 
 procedure TfrmMain.UpdateFName(const aPublisher: TObject; const anEvent: TEventClass);
