@@ -5,11 +5,13 @@ interface
 uses SysUtils, Classes, Generics.Collections;
 
 type
+  ETransaction = class(Exception);
+
   TEvent = class(TObject);
 
   TEventClass = class of TEvent;
 
-  TNotificationProc = procedure(const aPublisher: TObject; const aTopic: TEventClass) of object;
+  TNotificationProc = procedure(const aPublisher: TObject; const anEvent: TEventClass) of object;
 
   TDispatch = record
   private
@@ -37,6 +39,7 @@ type
     procedure Unsubscribe(const aSubscriber: TNotificationProc); overload;
     procedure Unsubscribe(const aSubscriber: TNotificationProc; const aTopic: TEventClass; const aPublisher: TObject = nil); overload;
   end;
+
 
 implementation
 

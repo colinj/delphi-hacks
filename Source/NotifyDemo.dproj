@@ -41,14 +41,15 @@
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
 			<DCCReference Include="fmMain.pas">
-				<Form>Form2</Form>
+				<Form>frmMain</Form>
 			</DCCReference>
 			<DCCReference Include="uNotification.pas"/>
 			<DCCReference Include="uModel.pas"/>
 			<DCCReference Include="dmController.pas">
-				<Form>DataModule1</Form>
+				<Form>dtmController</Form>
 				<DesignClass>TDataModule</DesignClass>
 			</DCCReference>
+			<DCCReference Include="uEvents.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
