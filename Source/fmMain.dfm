@@ -3,7 +3,7 @@ object frmMain: TfrmMain
   Top = 0
   Caption = 'frmMain'
   ClientHeight = 515
-  ClientWidth = 1045
+  ClientWidth = 537
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -90,14 +90,14 @@ object frmMain: TfrmMain
   end
   object Edit5: TEdit
     Left = 40
-    Top = 325
+    Top = 245
     Width = 153
     Height = 21
     TabOrder = 5
   end
   object Edit6: TEdit
     Left = 40
-    Top = 352
+    Top = 272
     Width = 121
     Height = 21
     NumbersOnly = True
@@ -105,7 +105,7 @@ object frmMain: TfrmMain
   end
   object Edit7: TEdit
     Left = 40
-    Top = 379
+    Top = 299
     Width = 121
     Height = 21
     NumbersOnly = True
@@ -113,7 +113,7 @@ object frmMain: TfrmMain
   end
   object Edit8: TEdit
     Left = 40
-    Top = 406
+    Top = 326
     Width = 121
     Height = 21
     NumbersOnly = True
@@ -121,7 +121,7 @@ object frmMain: TfrmMain
   end
   object Button2: TButton
     Left = 40
-    Top = 460
+    Top = 380
     Width = 75
     Height = 25
     Caption = '<'
@@ -130,7 +130,7 @@ object frmMain: TfrmMain
   end
   object Button3: TButton
     Left = 137
-    Top = 460
+    Top = 380
     Width = 75
     Height = 25
     Caption = '>'
@@ -139,32 +139,29 @@ object frmMain: TfrmMain
   end
   object Button4: TButton
     Left = 232
-    Top = 404
+    Top = 324
     Width = 75
     Height = 25
     Caption = 'Button4'
     TabOrder = 11
     OnClick = Button4Click
   end
-  object StringGrid1: TStringGrid
-    Left = 528
-    Top = 32
-    Width = 385
-    Height = 169
-    ColCount = 4
-    DefaultColWidth = 88
-    DrawingStyle = gdsGradient
-    FixedCols = 0
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
-    TabOrder = 12
-  end
   object Button5: TButton
-    Left = 912
-    Top = 448
+    Left = 422
+    Top = 324
     Width = 75
     Height = 25
-    Caption = 'Button5'
-    TabOrder = 13
+    Caption = 'Bar Chart'
+    TabOrder = 12
     OnClick = Button5Click
+  end
+  object Button6: TButton
+    Left = 422
+    Top = 380
+    Width = 75
+    Height = 25
+    Caption = 'Grid'
+    TabOrder = 13
+    OnClick = Button6Click
   end
 end

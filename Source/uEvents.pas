@@ -11,8 +11,11 @@ type
   TAgeEvent = class(TPersonEvent);
 
   TGradeEvent = class(TEvent);
-  TGradeNext = class(TGradeEvent);
-  TGradePrev = class(TGradeEvent);
+
+  TGradeNav = class(TGradeEvent);
+  TGradeNext = class(TGradeNav);
+  TGradePrev = class(TGradeNav);
+
   TGradeChange = class(TGradeEvent);
   TGradeNameChange = class(TGradeChange);
   TGradeValAChange = class(TGradeChange);

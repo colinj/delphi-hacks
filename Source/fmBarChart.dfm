@@ -60,11 +60,15 @@ object frmBarChart: TfrmBarChart
     BevelKind = bkSoft
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      530
+      41)
     object btnClose: TButton
       Left = 440
       Top = 8
       Width = 75
       Height = 25
+      Anchors = [akTop, akRight]
       Caption = 'Close'
       TabOrder = 0
       OnClick = btnCloseClick

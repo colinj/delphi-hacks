@@ -7,7 +7,8 @@ uses
   uModel in 'uModel.pas',
   dmController in 'dmController.pas' {dtmController: TDataModule},
   uEvents in 'uEvents.pas',
-  fmBarChart in 'fmBarChart.pas' {frmBarChart};
+  fmBarChart in 'fmBarChart.pas' {frmBarChart},
+  fmGrid in 'fmGrid.pas' {frmGrid};
 
 {$R *.res}
 
