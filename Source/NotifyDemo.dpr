@@ -8,7 +8,8 @@ uses
   dmController in 'dmController.pas' {dtmController: TDataModule},
   uEvents in 'uEvents.pas',
   fmBarChart in 'fmBarChart.pas' {frmBarChart},
-  fmGrid in 'fmGrid.pas' {frmGrid};
+  fmGrid in 'fmGrid.pas' {frmGrid},
+  fmPerson in 'fmPerson.pas' {frmPerson};
 
 {$R *.res}
 

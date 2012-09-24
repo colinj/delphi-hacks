@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, TeEngine, Series, TeeProcs, Chart, uNotification, uEvents;
+  Dialogs, StdCtrls, ExtCtrls, TeEngine, Series, TeeProcs, Chart, uNotification, uEvents, uModel;
 
 type
   TfrmBarChart = class(TForm)
@@ -17,6 +17,7 @@ type
     procedure btnCloseClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
+    FCurrent: TReportCard;
     procedure UpdateChart(const aPublisher: TObject; const anEvent: TEventClass);
   public
     { Public declarations }
@@ -27,7 +28,7 @@ var
 
 implementation
 
-uses dmController, uModel;
+uses dmController;
 
 {$R *.dfm}
 
@@ -45,9 +46,10 @@ end;
 
 procedure TfrmBarChart.FormCreate(Sender: TObject);
 begin
-  UpdateChart(dtmController.Current, TGradeEvent);
+  FCurrent := nil;
+  UpdateChart(dtmController.Current, TReportCardNav);
 
-  NC.Subscribe(UpdateChart, TGradeEvent);
+  NC.Subscribe(UpdateChart, TReportCardEvent);
 end;
 
 procedure TfrmBarChart.FormDestroy(Sender: TObject);
@@ -56,18 +58,18 @@ begin
 end;
 
 procedure TfrmBarChart.UpdateChart(const aPublisher: TObject; const anEvent: TEventClass);
-var
-  Grades: TGrades;
 begin
-  if anEvent.InheritsFrom(TGradeEvent) then
-  begin
-    Grades := TGrades(aPublisher);
+  // If its a navigational event make this object the 'Current' object.
+  if anEvent.InheritsFrom(TReportCardNav) then
+    FCurrent := TReportCard(aPublisher);
 
-    Chart1.Title.Caption := Grades.Name;
+  if aPublisher = FCurrent then
+  begin
+    Chart1.Title.Caption := FCurrent.Name;
     Series1.Clear;
-    Series1.Add(Grades.ValueA, 'A', clRed);
-    Series1.Add(Grades.ValueB, 'B', clBlue);
-    Series1.Add(Grades.ValueC, 'C', clGreen);
+    Series1.Add(FCurrent.ScoreA, 'A', clRed);
+    Series1.Add(FCurrent.ScoreB, 'B', clBlue);
+    Series1.Add(FCurrent.ScoreC, 'C', clGreen);
   end;
 end;
 

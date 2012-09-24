@@ -56,6 +56,9 @@
 			<DCCReference Include="fmGrid.pas">
 				<Form>frmGrid</Form>
 			</DCCReference>
+			<DCCReference Include="fmPerson.pas">
+				<Form>frmPerson</Form>
+			</DCCReference>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

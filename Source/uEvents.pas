@@ -10,17 +10,17 @@ type
   TLastNameEvent = class(TPersonEvent);
   TAgeEvent = class(TPersonEvent);
 
-  TGradeEvent = class(TEvent);
+  TReportCardEvent = class(TEvent);
 
-  TGradeNav = class(TGradeEvent);
-  TGradeNext = class(TGradeNav);
-  TGradePrev = class(TGradeNav);
+  TReportCardNav = class(TReportCardEvent);
+  TReportCardNext = class(TReportCardNav);
+  TReportCardPrev = class(TReportCardNav);
 
-  TGradeChange = class(TGradeEvent);
-  TGradeNameChange = class(TGradeChange);
-  TGradeValAChange = class(TGradeChange);
-  TGradeValBChange = class(TGradeChange);
-  TGradeValCChange = class(TGradeChange);
+  TReportCardChange = class(TReportCardEvent);
+  TReportCardNameChange = class(TReportCardChange);
+  TReportCardScoreAChange = class(TReportCardChange);
+  TReportCardScoreBChange = class(TReportCardChange);
+  TReportCardScoreCChange = class(TReportCardChange);
 
 var
   NC: TNotificationCentre;

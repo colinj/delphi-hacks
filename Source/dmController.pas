@@ -10,24 +10,26 @@ type
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
   private
-    FGradeIndex: Integer;
+    FItemIndex: Integer;
     FPerson: TPerson;
-    FGrades: TGradesList;
+    FReportCards: TReportCardList;
     function GetAge: string;
     function GetFirstName: string;
     function GetLastName: string;
     procedure SetAge(const Value: string);
     procedure SetFirstName(const Value: string);
     procedure SetLastName(const Value: string);
-    function GetCurrent: TGrades;
+    function GetCurrent: TReportCard;
+    procedure SetItemIndex(const Value: Integer);
   public
     procedure Next;
     procedure Prev;
     property FirstName: string read GetFirstName write SetFirstName;
     property LastName: string read GetLastName write SetLastName;
     property Age: string read GetAge write SetAge;
-    property Current: TGrades read GetCurrent;
-    property Grades: TGradesList read FGrades;
+    property Current: TReportCard read GetCurrent;
+    property ReportCards: TReportCardList read FReportCards;
+    property ItemIndex: Integer read FItemIndex write SetItemIndex;
   end;
 
 var
@@ -40,17 +42,17 @@ implementation
 procedure TdtmController.DataModuleCreate(Sender: TObject);
 begin
   FPerson := TPerson.Create('Tom', 'Perry', 41);
-  FGrades := TGradesList.Create;
-  FGrades.Add(TGrades.Create('Tom', 20, 50, 40));
-  FGrades.Add(TGrades.Create('Peter', 15, 35, 25));
-  FGrades.Add(TGrades.Create('Mary', 30, 60, 90));
-  FGrades.Add(TGrades.Create('Jane', 10, 20, 40));
-  FGradeIndex := 0;
+  FReportCards := TReportCardList.Create;
+  FReportCards.Add(TReportCard.Create('Tom', 20, 50, 40));
+  FReportCards.Add(TReportCard.Create('Peter', 15, 35, 25));
+  FReportCards.Add(TReportCard.Create('Mary', 30, 60, 90));
+  FReportCards.Add(TReportCard.Create('Jane', 10, 20, 40));
+  FItemIndex := 0;
 end;
 
 procedure TdtmController.DataModuleDestroy(Sender: TObject);
 begin
-  FGrades.Free;
+  FReportCards.Free;
   FPerson.Free;
 end;
 
@@ -59,9 +61,9 @@ begin
   Result := IntToStr(FPerson.Age);
 end;
 
-function TdtmController.GetCurrent: TGrades;
+function TdtmController.GetCurrent: TReportCard;
 begin
-  Result := FGrades[FGradeIndex];
+  Result := FReportCards[FItemIndex];
 end;
 
 function TdtmController.GetFirstName: string;
@@ -76,22 +78,22 @@ end;
 
 procedure TdtmController.Next;
 begin
-  if FGradeIndex < FGrades.Count - 1 then
-    Inc(FGradeIndex)
+  if FItemIndex < FReportCards.Count - 1 then
+    Inc(FItemIndex)
   else
-    FGradeIndex := 0;
+    FItemIndex := 0;
 
-  NC.Publish(Self.Current, TGradeNext);
+  NC.Publish(Self.Current, TReportCardNext);
 end;
 
 procedure TdtmController.Prev;
 begin
-  if FGradeIndex = 0 then
-    FGradeIndex := FGrades.Count - 1
+  if FItemIndex = 0 then
+    FItemIndex := FReportCards.Count - 1
   else
-    Dec(FGradeIndex);
+    Dec(FItemIndex);
 
-  NC.Publish(Self.Current, TGradePrev);
+  NC.Publish(Self.Current, TReportCardPrev);
 end;
 
 procedure TdtmController.SetAge(const Value: string);
@@ -104,6 +106,15 @@ procedure TdtmController.SetFirstName(const Value: string);
 begin
   FPerson.FirstName := Value;
   NC.Publish(Self, TFirstNameEvent);
+end;
+
+procedure TdtmController.SetItemIndex(const Value: Integer);
+begin
+  if FItemIndex <> Value then
+  begin
+    FItemIndex := Value;
+    NC.Publish(Self.Current, TReportCardNav);
+  end;
 end;
 
 procedure TdtmController.SetLastName(const Value: string);

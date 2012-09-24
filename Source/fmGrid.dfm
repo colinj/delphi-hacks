@@ -57,10 +57,14 @@ object frmGrid: TfrmGrid
     Font.Height = -16
     Font.Name = 'Arial'
     Font.Style = [fsBold]
-    GradientEndColor = 16744448
-    GradientStartColor = 16770250
+    GradientEndColor = 12615680
+    GradientStartColor = 16766333
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing]
     ParentFont = False
     TabOrder = 1
+    OnEnter = StringGrid1Enter
+    OnExit = StringGrid1Exit
+    OnSelectCell = StringGrid1SelectCell
+    OnSetEditText = StringGrid1SetEditText
   end
 end

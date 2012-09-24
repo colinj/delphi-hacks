@@ -2,9 +2,11 @@ unit uModel;
 
 interface
 
-uses Generics.Collections, uNotification, uEvents;
+uses SysUtils, Generics.Collections, uNotification, uEvents;
 
 type
+  ETransaction = class(Exception);
+
   TPerson = class(TObject)
   private
     FAge: Integer;
@@ -17,17 +19,17 @@ type
     property Age: Integer read FAge write FAge;
   end;
 
-  TGrades = class(TObject)
+  TReportCard = class(TObject)
   private
     FTransactionLevel: Integer;
     FChanged: Boolean;
     FName: string;
-    FValueA: Integer;
-    FValueB: Integer;
-    FValueC: Integer;
-    procedure SetValueA(const Value: Integer);
-    procedure SetValueB(const Value: Integer);
-    procedure SetValueC(const Value: Integer);
+    FScoreA: Integer;
+    FScoreB: Integer;
+    FScoreC: Integer;
+    procedure SetScoreA(const Value: Integer);
+    procedure SetScoreB(const Value: Integer);
+    procedure SetScoreC(const Value: Integer);
     procedure SetName(const Value: string);
     procedure Notify(const anEvent: TEventClass);
   public
@@ -36,12 +38,12 @@ type
     procedure BeginUpdate;
     procedure EndUpdate;
     property Name: string read FName write SetName;
-    property ValueA: Integer read FValueA write SetValueA;
-    property ValueB: Integer read FValueB write SetValueB;
-    property ValueC: Integer read FValueC write SetValueC;
+    property ScoreA: Integer read FScoreA write SetScoreA;
+    property ScoreB: Integer read FScoreB write SetScoreB;
+    property ScoreC: Integer read FScoreC write SetScoreC;
   end;
 
-  TGradesList = class(TObjectList<TGrades>);
+  TReportCardList = class(TObjectList<TReportCard>);
 
 implementation
 
@@ -55,39 +57,39 @@ begin
   FAge := anAge;
 end;
 
-{ TGrades }
+{ TReportCard }
 
-procedure TGrades.BeginUpdate;
+procedure TReportCard.BeginUpdate;
 begin
   Inc(FTransactionLevel);
 end;
 
-constructor TGrades.Create(const aName: string; const aValueA, aValueB, aValueC: Integer);
+constructor TReportCard.Create(const aName: string; const aValueA, aValueB, aValueC: Integer);
 begin
   inherited Create;
   FTransactionLevel := 0;
   FChanged := False;
   FName := aName;
-  FValueA := aValueA;
-  FValueB := aValueB;
-  FValueC := aValueC;
+  FScoreA := aValueA;
+  FScoreB := aValueB;
+  FScoreC := aValueC;
 //  Notify(TGradeChange);
 end;
 
-procedure TGrades.EndUpdate;
+procedure TReportCard.EndUpdate;
 begin
   if FTransactionLevel > 0 then
   begin
     Dec(FTransactionLevel);
 
     if (FTransactionLevel = 0) and FChanged then
-      Notify(TGradeChange);
+      Notify(TReportCardChange);
   end
   else
     raise ETransaction.Create('You are not in a transaction.');
 end;
 
-procedure TGrades.Notify(const anEvent: TEventClass);
+procedure TReportCard.Notify(const anEvent: TEventClass);
 begin
   FChanged := True;
   if FTransactionLevel = 0 then
@@ -97,44 +99,44 @@ begin
   end;
 end;
 
-constructor TGrades.Create(const aName: string);
+constructor TReportCard.Create(const aName: string);
 begin
   Create(aName, 0, 0, 0);
 end;
 
-procedure TGrades.SetName(const Value: string);
+procedure TReportCard.SetName(const Value: string);
 begin
   if FName <> Value then
   begin
     FName := Value;
-    Notify(TGradeNameChange);
+    Notify(TReportCardNameChange);
   end;
 end;
 
-procedure TGrades.SetValueA(const Value: Integer);
+procedure TReportCard.SetScoreA(const Value: Integer);
 begin
-  if FValueA <> Value then
+  if FScoreA <> Value then
   begin
-    FValueA := Value;
-    Notify(TGradeValAChange);
+    FScoreA := Value;
+    Notify(TReportCardScoreAChange);
   end;
 end;
 
-procedure TGrades.SetValueB(const Value: Integer);
+procedure TReportCard.SetScoreB(const Value: Integer);
 begin
-  if FValueB <> Value then
+  if FScoreB <> Value then
   begin
-    FValueB := Value;
-    Notify(TGradeValBChange);
+    FScoreB := Value;
+    Notify(TReportCardScoreBChange);
   end;
 end;
 
-procedure TGrades.SetValueC(const Value: Integer);
+procedure TReportCard.SetScoreC(const Value: Integer);
 begin
-  if FValueC <> Value then
+  if FScoreC <> Value then
   begin
-    FValueC := Value;
-    Notify(TGradeValCChange);
+    FScoreC := Value;
+    Notify(TReportCardScoreCChange);
   end;
 end;
 

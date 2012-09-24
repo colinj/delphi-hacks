@@ -5,8 +5,6 @@ interface
 uses SysUtils, Classes, Generics.Collections;
 
 type
-  ETransaction = class(Exception);
-
   TEvent = class(TObject);
 
   TEventClass = class of TEvent;
