@@ -31,15 +31,6 @@ function ObjectFactory: TObjectFactory;
 
 implementation
 
-type
-  TClassItem = class(TObject)
-  private
-    FClassRef: TBaseClass;
-  public
-    constructor Create(const AClass: TBaseClass);
-    property ClassRef: TBaseClass read FClassRef;
-  end;
-
 var
   FactoryImpl: TObjectFactory = nil;
 
@@ -49,21 +40,15 @@ function ObjectFactory: TObjectFactory;
 begin
   if FactoryImpl = nil then
     FactoryImpl := TObjectFactory.Create;
+
   Result := FactoryImpl;
-end;
-
-{ TClassItem }
-
-constructor TClassItem.Create(const AClass: TBaseClass);
-begin
-  inherited Create;
-  FClassRef := AClass;
 end;
 
 { TObjectFactory }
 
 constructor TObjectFactory.Create;
 begin
+  inherited Create;
   FItems := TStringList.Create;
 end;
 
@@ -73,18 +58,8 @@ begin
 end;
 
 destructor TObjectFactory.Destroy;
-
-  procedure FreeList(var StringList: TStringList);
-  var
-    I: Integer;
-  begin
-    for I := 0 to StringList.Count - 1 do
-      StringList.Objects[I].Free;
-    StringList.Free;
-  end;
-
 begin
-  FreeList(FItems);
+  FItems.Free;
   inherited;
 end;
 
@@ -96,7 +71,7 @@ begin
   if I = -1 then
     raise EFactoryException.CreateFmt('No class: %s exists', [AName])
   else
-    Result := TClassItem(FItems.Objects[I]).ClassRef;
+    Result := TBaseClass(FItems.Objects[I]);
 end;
 
 procedure TObjectFactory.RegisterClass(const AName: string; const AClass: TBaseClass);
@@ -107,7 +82,7 @@ begin
   ItemName := UpperCase(AName);
   I := FItems.IndexOf(ItemName);
   if I = -1 then
-    FItems.AddObject(ItemName, TClassItem.Create(AClass))
+    FItems.AddObject(ItemName, TObject(AClass))
   else
     raise EFactoryException.CreateFmt('Class: %s has already been registered', [AName]);
 end;
