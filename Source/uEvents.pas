@@ -2,7 +2,7 @@ unit uEvents;
 
 interface
 
-uses uNotification;
+uses uEventAgg;
 
 type
   TPersonEvent = class(TEvent);
@@ -23,17 +23,17 @@ type
   TReportCardScoreCChange = class(TReportCardChange);
 
 var
-  NC: TNotificationCentre;
+  EA: TEventAggregator;
 
 implementation
 
 
 initialization
 
-  NC := TNotificationCentre.Create;
+  EA := TEventAggregator.Create;
 
 finalization
 
-  NC.Free;
+  EA.Free;
 
 end.

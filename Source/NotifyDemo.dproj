@@ -43,7 +43,7 @@
 			<DCCReference Include="fmMain.pas">
 				<Form>frmMain</Form>
 			</DCCReference>
-			<DCCReference Include="uNotification.pas"/>
+			<DCCReference Include="uEventAgg.pas"/>
 			<DCCReference Include="uModel.pas"/>
 			<DCCReference Include="dmController.pas">
 				<Form>dtmController</Form>
@@ -56,8 +56,8 @@
 			<DCCReference Include="fmGrid.pas">
 				<Form>frmGrid</Form>
 			</DCCReference>
-			<DCCReference Include="fmPerson.pas">
-				<Form>frmPerson</Form>
+			<DCCReference Include="fmPieChart.pas">
+				<Form>frmPieChart</Form>
 			</DCCReference>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

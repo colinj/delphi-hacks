@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, uNotification, uEvents, uModel;
+  Dialogs, StdCtrls, uEventAgg, uEvents, uModel;
 
 type
   TfrmMain = class(TForm)
@@ -12,26 +12,23 @@ type
     Edit6: TEdit;
     Edit7: TEdit;
     Edit8: TEdit;
-    Button2: TButton;
-    Button3: TButton;
-    Button4: TButton;
-    Button5: TButton;
-    Button6: TButton;
-    Memo1: TMemo;
-    Button1: TButton;
+    btnPrev: TButton;
+    btnNext: TButton;
+    btnBarChart: TButton;
+    btnGrid: TButton;
+    btnPieChart: TButton;
     procedure FormCreate(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
-    procedure Button5Click(Sender: TObject);
-    procedure Button6Click(Sender: TObject);
+    procedure btnPrevClick(Sender: TObject);
+    procedure btnNextClick(Sender: TObject);
+    procedure btnBarChartClick(Sender: TObject);
+    procedure btnGridClick(Sender: TObject);
+    procedure Edit5Exit(Sender: TObject);
+    procedure btnPieChartClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     FCurrent: TReportCard;
-    procedure UpdateGrade(const aPublisher: TObject; const anEvent: TEventClass);
-    procedure UpdateReportCard(const aPublisher: TObject; const anEvent: TEventClass);
-    procedure UpdateEventLog(const aPublisher: TObject; const anEvent: TEventClass);
-  public
-    { Public declarations }
+    procedure UpdateForm(const aPublisher: TObject; const anEvent: TEventClass);
+    procedure UpdateModel;
   end;
 
 var
@@ -39,21 +36,39 @@ var
 
 implementation
 
-uses dmController, fmBarChart, fmGrid;
+uses dmController, fmBarChart, fmGrid, fmPieChart;
 
 {$R *.dfm}
 
-procedure TfrmMain.Button2Click(Sender: TObject);
+procedure TfrmMain.FormCreate(Sender: TObject);
+begin
+  FCurrent := nil;
+  UpdateForm(dtmController.Current, TReportCardNav);
+  EA.Subscribe(UpdateForm, TReportCardEvent);
+end;
+
+procedure TfrmMain.FormDestroy(Sender: TObject);
+begin
+  EA.Unsubscribe(UpdateForm);
+end;
+
+procedure TfrmMain.btnPrevClick(Sender: TObject);
 begin
   dtmController.Prev;
 end;
 
-procedure TfrmMain.Button3Click(Sender: TObject);
+procedure TfrmMain.btnNextClick(Sender: TObject);
 begin
   dtmController.Next;
 end;
 
-procedure TfrmMain.Button4Click(Sender: TObject);
+procedure TfrmMain.Edit5Exit(Sender: TObject);
+begin
+  if TEdit(Sender).Modified then
+    UpdateModel;
+end;
+
+procedure TfrmMain.UpdateModel;
 begin
   dtmController.Current.BeginUpdate;
   try
@@ -66,36 +81,7 @@ begin
   end;
 end;
 
-procedure TfrmMain.Button5Click(Sender: TObject);
-var
-  NewBarChart: TfrmBarChart;
-begin
-  NewBarChart := TfrmBarChart.Create(Self);
-  NewBarChart.Show;
-end;
-
-procedure TfrmMain.Button6Click(Sender: TObject);
-var
-  NewGrid: TfrmGrid;
-begin
-  NewGrid := TfrmGrid.Create(Self);
-  NewGrid.Show;
-end;
-
-procedure TfrmMain.FormCreate(Sender: TObject);
-begin
-  FCurrent := nil;
-  UpdateReportCard(dtmController.Current, TReportCardNav);
-  NC.Subscribe(UpdateReportCard, TReportCardEvent);
-  NC.Subscribe(UpdateEventLog, TEvent);
-end;
-
-procedure TfrmMain.UpdateEventLog(const aPublisher: TObject; const anEvent: TEventClass);
-begin
-  Memo1.Lines.Add(anEvent.ClassName)
-end;
-
-procedure TfrmMain.UpdateReportCard(const aPublisher: TObject; const anEvent: TEventClass);
+procedure TfrmMain.UpdateForm(const aPublisher: TObject; const anEvent: TEventClass);
 begin
   if anEvent.InheritsFrom(TReportCardNav) then
     FCurrent := TReportCard(aPublisher);
@@ -109,19 +95,29 @@ begin
   end;
 end;
 
-procedure TfrmMain.UpdateGrade(const aPublisher: TObject; const anEvent: TEventClass);
+procedure TfrmMain.btnPieChartClick(Sender: TObject);
+var
+  NewChart: TfrmPieChart;
 begin
-  if anEvent.InheritsFrom(TReportCardNameChange) then
-    Edit5.Text := TReportCard(aPublisher).Name;
-
-  if anEvent.InheritsFrom(TReportCardScoreAChange) then
-    Edit6.Text := IntToStr(TReportCard(aPublisher).ScoreA);
-
-  if anEvent.InheritsFrom(TReportCardScoreBChange) then
-    Edit7.Text := IntToStr(TReportCard(aPublisher).ScoreB);
-
-  if anEvent.InheritsFrom(TReportCardScoreCChange) then
-    Edit8.Text := IntToStr(TReportCard(aPublisher).ScoreC);
+  NewChart := TfrmPieChart.Create(Self);
+  NewChart.Show;
 end;
+
+procedure TfrmMain.btnBarChartClick(Sender: TObject);
+var
+  NewBarChart: TfrmBarChart;
+begin
+  NewBarChart := TfrmBarChart.Create(Self);
+  NewBarChart.Show;
+end;
+
+procedure TfrmMain.btnGridClick(Sender: TObject);
+var
+  NewGrid: TfrmGrid;
+begin
+  NewGrid := TfrmGrid.Create(Self);
+  NewGrid.Show;
+end;
+
 
 end.

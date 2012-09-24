@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, Grids, uNotification, uEvents;
+  Dialogs, StdCtrls, ExtCtrls, Grids, uEventAgg, uEvents;
 
 type
   TfrmGrid = class(TForm)
@@ -20,14 +20,16 @@ type
     procedure StringGrid1SetEditText(Sender: TObject; ACol, ARow: Integer; const Value: string);
     procedure StringGrid1Exit(Sender: TObject);
     procedure StringGrid1SelectCell(Sender: TObject; ACol, ARow: Integer; var CanSelect: Boolean);
+    procedure StringGrid1DblClick(Sender: TObject);
   private
     FOldRow: Integer;
     FEditingCol: Integer;
     FEditingRow: Integer;
+    FSelectedRow: Integer;
     procedure InitialiseGrid;
-    procedure UpdateGrid(const aPublisher: TObject; const anEvent: TEventClass);
+    procedure UpdateRow(const aPublisher: TObject; const anEvent: TEventClass);
     procedure UpdateCursor(const aPublisher: TObject; const anEvent: TEventClass);
-    procedure UpdateObject(const aCol, aRow: Integer);
+    procedure UpdateModel(const aCol, aRow: Integer);
   public
   end;
 
@@ -53,14 +55,14 @@ end;
 procedure TfrmGrid.FormCreate(Sender: TObject);
 begin
   InitialiseGrid;
-  NC.Subscribe(UpdateGrid, TReportCardChange);
-  NC.Subscribe(UpdateCursor, TReportCardNav);
+  EA.Subscribe(UpdateRow, TReportCardChange);
+  EA.Subscribe(UpdateCursor, TReportCardNav);
 end;
 
 procedure TfrmGrid.FormDestroy(Sender: TObject);
 begin
-  NC.Unsubscribe(UpdateGrid);
-  NC.UnSubscribe(UpdateCursor);
+  EA.Unsubscribe(UpdateRow);
+  EA.UnSubscribe(UpdateCursor);
 end;
 
 procedure TfrmGrid.FormResize(Sender: TObject);
@@ -79,8 +81,13 @@ begin
   begin
     StringGrid1.Objects[0, I + 1] := dtmController.ReportCards.Items[I];
     UpdateCursor(dtmController.ReportCards.Items[I], nil);
-    UpdateGrid(dtmController.ReportCards.Items[I], nil);
+    UpdateRow(dtmController.ReportCards.Items[I], nil);
   end;
+end;
+
+procedure TfrmGrid.StringGrid1DblClick(Sender: TObject);
+begin
+  dtmController.ItemIndex := FSelectedRow;
 end;
 
 procedure TfrmGrid.StringGrid1Enter(Sender: TObject);
@@ -93,33 +100,27 @@ procedure TfrmGrid.StringGrid1Exit(Sender: TObject);
 begin
   if (FEditingCol <> -1) and (FEditingRow <> -1) then
   begin
-    UpdateObject(FEditingCol, FEditingRow);
+    UpdateModel(FEditingCol, FEditingRow);
   end;
 end;
 
 procedure TfrmGrid.StringGrid1SelectCell(Sender: TObject; ACol, ARow: Integer; var CanSelect: Boolean);
 begin
+  FSelectedRow := ARow - 1;
+
   if (ACol <> FEditingCol) or (ARow <> FEditingRow) then
-    UpdateObject(FEditingCol, FEditingRow);
+    UpdateModel(FEditingCol, FEditingRow);
 end;
 
 procedure TfrmGrid.StringGrid1SetEditText(Sender: TObject; ACol, ARow: Integer; const Value: string);
 begin
   if not StringGrid1.EditorMode then
-    UpdateObject(ACol, ARow)
+    UpdateModel(ACol, ARow)
   else
   begin
     FEditingCol := ACol;
     FEditingRow := ARow;
   end;
-//
-//  if (ACol <> FEditingCol) and (ARow <> FEditingRow) then
-//  begin
-//    if (FEditingCol <> -1) and (FEditingRow <> -1) then
-//      UpdateObject(FEditingCol, FEditingRow);
-//    FEditingCol := ACol;
-//    FEditingRow := ARow;
-//  end;
 end;
 
 procedure TfrmGrid.UpdateCursor(const aPublisher: TObject; const anEvent: TEventClass);
@@ -141,7 +142,7 @@ begin
   end;
 end;
 
-procedure TfrmGrid.UpdateGrid(const aPublisher: TObject; const anEvent: TEventClass);
+procedure TfrmGrid.UpdateRow(const aPublisher: TObject; const anEvent: TEventClass);
 var
   RowNo: Integer;
 begin
@@ -155,7 +156,7 @@ begin
   end;
 end;
 
-procedure TfrmGrid.UpdateObject(const aCol, aRow: Integer);
+procedure TfrmGrid.UpdateModel(const aCol, aRow: Integer);
 var
   Grade: TReportCard;
 begin

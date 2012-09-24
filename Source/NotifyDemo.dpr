@@ -3,13 +3,13 @@ program NotifyDemo;
 uses
   Forms,
   fmMain in 'fmMain.pas' {frmMain},
-  uNotification in 'uNotification.pas',
+  uEventAgg in 'uEventAgg.pas',
   uModel in 'uModel.pas',
   dmController in 'dmController.pas' {dtmController: TDataModule},
   uEvents in 'uEvents.pas',
   fmBarChart in 'fmBarChart.pas' {frmBarChart},
   fmGrid in 'fmGrid.pas' {frmGrid},
-  fmPerson in 'fmPerson.pas' {frmPerson};
+  fmPieChart in 'fmPieChart.pas' {frmPieChart};
 
 {$R *.res}
 

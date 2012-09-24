@@ -2,7 +2,7 @@ unit uModel;
 
 interface
 
-uses SysUtils, Generics.Collections, uNotification, uEvents;
+uses SysUtils, Generics.Collections, uEventAgg, uEvents;
 
 type
   ETransaction = class(Exception);
@@ -95,7 +95,7 @@ begin
   if FTransactionLevel = 0 then
   begin
     FChanged := False;
-    NC.Publish(Self, anEvent);
+    EA.Publish(Self, anEvent);
   end;
 end;
 
