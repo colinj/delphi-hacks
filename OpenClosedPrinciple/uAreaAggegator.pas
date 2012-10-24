@@ -8,22 +8,26 @@ uses
 type
     TAreaAggregator = class(TObject)
     public
-        function SumArea(const aShapes: array of TRectangle): Double;
+        function SumArea(const aShapes: array of TShape): Double;
     end;
 
 implementation
 
 { TAreaAggregator }
 
-function TAreaAggregator.SumArea(const aShapes: array of TRectangle): Double;
+function TAreaAggregator.SumArea(const aShapes: array of TShape): Double;
 var
-    Rectangle: TRectangle;
+    Shape: TShape;
 begin
     Result := 0;
 
-    for Rectangle in aShapes do
+    for Shape in aShapes do
     begin
-        Result := Result + Rectangle.Height * Rectangle.Width;
+        if Shape is TRectangle then
+            Result := Result + (TRectangle(Shape).Height * TRectangle(Shape).Width);
+
+        if Shape is TCircle then
+            Result := Result + (Pi * TCircle(Shape).Radius * TCircle(Shape).Radius);
     end;
 end;
 
