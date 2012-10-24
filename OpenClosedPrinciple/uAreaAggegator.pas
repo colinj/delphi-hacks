@@ -8,22 +8,22 @@ uses
 type
     TAreaAggregator = class(TObject)
     public
-        function SumArea(const aShapes: array of TShape): Double;
+        function SumArea(const aItems: array of IHasArea): Double;
     end;
 
 implementation
 
 { TAreaAggregator }
 
-function TAreaAggregator.SumArea(const aShapes: array of TShape): Double;
+function TAreaAggregator.SumArea(const aItems: array of IHasArea): Double;
 var
-    Shape: TShape;
+    I: Integer;
 begin
     Result := 0;
 
-    for Shape in aShapes do
+    for I := Low(aItems) to High(aItems) do
     begin
-        Result := Result + Shape.Area;
+        Result := Result + aItems[I].Area;
     end;
 end;
 

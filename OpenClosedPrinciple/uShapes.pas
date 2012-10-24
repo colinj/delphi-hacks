@@ -3,55 +3,43 @@ unit uShapes;
 interface
 
 type
-    TShape = class(TObject)
-    protected
-        function GetArea: Double; virtual; abstract;
-    public
+    IHasArea = interface
+        function GetArea: Double;
         property Area: Double read GetArea;
     end;
 
-    TRectangle = class(TShape)
+    TRectangle = class(TInterfacedObject, IHasArea)
     private
         FHeight: Double;
         FWidth: Double;
-    protected
-        function GetArea: Double; override;
+        function GetArea: Double;
     public
         constructor Create(const aHeight, aWidth: Double);
-        property Height: Double read FHeight write FHeight;
-        property Width: Double read FWidth write FWidth;
     end;
 
-    TCircle = class(TShape)
+    TCircle = class(TInterfacedObject, IHasArea)
     private
         FRadius: Double;
-    protected
-        function GetArea: Double; override;
+        function GetArea: Double;
     public
         constructor Create(const aRadius: Double);
-        property Radius: Double read FRadius write FRadius;
     end;
 
-    TTriangle = class(TShape)
+    TTriangle = class(TInterfacedObject, IHasArea)
     private
         FBase: Double;
         FHeight: Double;
-    protected
-        function GetArea: Double; override;
+        function GetArea: Double;
     public
         constructor Create(const aBase, aHeight: Double);
-        property Base: Double read FBase write FBase;
-        property Height: Double read FHeight write FHeight;
     end;
 
-    TSquare = class(TShape)
+    TSquare = class(TInterfacedObject, IHasArea)
     private
         FSide: Double;
-    protected
-        function GetArea: Double; override;
+        function GetArea: Double;
     public
         constructor Create(const aSide: Double);
-        property Side: Double read FSide write FSide;
     end;
 
 implementation
