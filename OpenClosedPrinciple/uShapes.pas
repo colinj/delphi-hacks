@@ -3,12 +3,19 @@ unit uShapes;
 interface
 
 type
-    TShape = class(TObject);
+    TShape = class(TObject)
+    protected
+        function GetArea: Double; virtual; abstract;
+    public
+        property Area: Double read GetArea;
+    end;
 
     TRectangle = class(TShape)
     private
         FHeight: Double;
         FWidth: Double;
+    protected
+        function GetArea: Double; override;
     public
         constructor Create(const aHeight, aWidth: Double);
         property Height: Double read FHeight write FHeight;
@@ -18,6 +25,8 @@ type
     TCircle = class(TShape)
     private
         FRadius: Double;
+    protected
+        function GetArea: Double; override;
     public
         constructor Create(const aRadius: Double);
         property Radius: Double read FRadius write FRadius;
@@ -27,6 +36,8 @@ type
     private
         FBase: Double;
         FHeight: Double;
+    protected
+        function GetArea: Double; override;
     public
         constructor Create(const aBase, aHeight: Double);
         property Base: Double read FBase write FBase;
@@ -44,12 +55,22 @@ begin
     FWidth := aWidth;
 end;
 
+function TRectangle.GetArea: Double;
+begin
+    Result := FHeight * FWidth;
+end;
+
 { TCircle }
 
 constructor TCircle.Create(const aRadius: Double);
 begin
     inherited Create;
     FRadius := aRadius;
+end;
+
+function TCircle.GetArea: Double;
+begin
+    Result := Pi * FRadius * FRadius;
 end;
 
 { TTriangle }
@@ -59,6 +80,11 @@ begin
     inherited Create;
     FBase := aBase;
     FHeight := aHeight;
+end;
+
+function TTriangle.GetArea: Double;
+begin
+    Result := FBase * FHeight / 2;
 end;
 
 end.
