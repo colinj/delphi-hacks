@@ -23,13 +23,16 @@ type
         procedure TearDown; override;
     published
         procedure TestSumArea_ZeroShapes;
-
+        
         procedure TestSumArea_OneRectangle;
         procedure TestSumArea_TwoRectangles;
         procedure TestSumArea_ThreeRectangles;
 
         procedure TestSumArea_OneCircle;
         procedure TestSumArea_TwoCircles;
+
+        procedure TestSumArea_OneTriangle;
+        procedure TestSumArea_TwoTriangles;
 
         procedure TestSumArea_MixedShapes;
     end;
@@ -64,17 +67,20 @@ var
     ReturnValue: Double;
     C1: TCircle;
     R1: TRectangle;
+    T1: TTriangle;
 begin
     C1 := TCircle.Create(5);
     R1 := TRectangle.Create(4, 8);
+    T1 := TTriangle.Create(3, 4);
     try
-        ReturnValue := FAreaAggregator.SumArea([C1, R1]);
+        ReturnValue := FAreaAggregator.SumArea([C1, R1, T1]);
     finally
         C1.Free;
         R1.Free;
+        T1.Free;
     end;
 
-    CheckEquals((25 * Pi) + 32, ReturnValue, DELTA);
+    CheckEquals((25 * Pi) + 32 + 6, ReturnValue, DELTA);
 end;
 
 procedure TestTAreaAggregator.TestSumArea_OneCircle;
@@ -105,6 +111,21 @@ begin
     end;
 
     CheckEquals(12, ReturnValue);
+end;
+
+procedure TestTAreaAggregator.TestSumArea_OneTriangle;
+var
+    ReturnValue: Double;
+    T1: TTriangle;
+begin
+    T1 := TTriangle.Create(3, 4);
+    try
+        ReturnValue := FAreaAggregator.SumArea([T1]);
+    finally
+        T1.Free;
+    end;
+
+    CheckEquals(6, ReturnValue);
 end;
 
 procedure TestTAreaAggregator.TestSumArea_TwoCircles;
@@ -139,6 +160,23 @@ begin
     end;
 
     CheckEquals(28, ReturnValue);
+end;
+
+procedure TestTAreaAggregator.TestSumArea_TwoTriangles;
+var
+    ReturnValue: Double;
+    T1, T2: TTriangle;
+begin
+    T1 := TTriangle.Create(3, 4);
+    T2 := TTriangle.Create(8, 2);
+    try
+        ReturnValue := FAreaAggregator.SumArea([T1, T2]);
+    finally
+        T1.Free;
+        T2.Free;
+    end;
+
+    CheckEquals(14, ReturnValue);
 end;
 
 procedure TestTAreaAggregator.TestSumArea_ThreeRectangles;

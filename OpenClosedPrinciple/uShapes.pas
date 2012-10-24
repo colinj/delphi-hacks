@@ -23,6 +23,16 @@ type
         property Radius: Double read FRadius write FRadius;
     end;
 
+    TTriangle = class(TShape)
+    private
+        FBase: Double;
+        FHeight: Double;
+    public
+        constructor Create(const aBase, aHeight: Double);
+        property Base: Double read FBase write FBase;
+        property Height: Double read FHeight write FHeight;
+    end;
+
 implementation
 
 { TRectangle }
@@ -40,6 +50,15 @@ constructor TCircle.Create(const aRadius: Double);
 begin
     inherited Create;
     FRadius := aRadius;
+end;
+
+{ TTriangle }
+
+constructor TTriangle.Create(const aBase, aHeight: Double);
+begin
+    inherited Create;
+    FBase := aBase;
+    FHeight := aHeight;
 end;
 
 end.

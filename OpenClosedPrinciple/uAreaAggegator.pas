@@ -28,6 +28,9 @@ begin
 
         if Shape is TCircle then
             Result := Result + (Pi * TCircle(Shape).Radius * TCircle(Shape).Radius);
+
+        if Shape is TTriangle then
+            Result := Result + (TTriangle(Shape).Base * TTriangle(Shape).Height / 2);
     end;
 end;
 
