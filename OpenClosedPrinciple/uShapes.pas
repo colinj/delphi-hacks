@@ -44,6 +44,16 @@ type
         property Height: Double read FHeight write FHeight;
     end;
 
+    TSquare = class(TShape)
+    private
+        FSide: Double;
+    protected
+        function GetArea: Double; override;
+    public
+        constructor Create(const aSide: Double);
+        property Side: Double read FSide write FSide;
+    end;
+
 implementation
 
 { TRectangle }
@@ -85,6 +95,19 @@ end;
 function TTriangle.GetArea: Double;
 begin
     Result := FBase * FHeight / 2;
+end;
+
+{ TSquare }
+
+constructor TSquare.Create(const aSide: Double);
+begin
+    inherited Create;
+    FSide := aSide;
+end;
+
+function TSquare.GetArea: Double;
+begin
+    Result := FSide * FSide;
 end;
 
 end.
